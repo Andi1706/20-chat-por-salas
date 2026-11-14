@@ -29,6 +29,8 @@ export function getAdminAuth() {
   return getAuth(iniciar());
 }
 
+/** Si la base de datos no se llama "(default)", se indica su nombre en FIRESTORE_DATABASE_ID. */
 export function getDb() {
-  return getFirestore(iniciar());
+  const idBase = process.env.FIRESTORE_DATABASE_ID;
+  return idBase ? getFirestore(iniciar(), idBase) : getFirestore(iniciar());
 }
