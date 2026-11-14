@@ -19,12 +19,7 @@
       "Bash(git reset --hard *)",
       "Bash(vercel env pull *)"
     ],
-    "ask": [
-      "Bash(git push *)",
-      "Bash(npm install *)",
-      "Bash(npm i *)",
-      "Bash(vercel *)"
-    ],
+    "ask": ["Bash(git push *)", "Bash(npm install *)", "Bash(npm i *)", "Bash(vercel *)"],
     "allow": [
       "Bash(npm run *)",
       "Bash(npx tsc *)",
