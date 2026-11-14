@@ -1,0 +1,21 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "salas",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "privada", "order": "ASCENDING" },
+        { "fieldPath": "creadaEn", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "salas",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "miembros", "arrayConfig": "CONTAINS" },
+        { "fieldPath": "creadaEn", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
