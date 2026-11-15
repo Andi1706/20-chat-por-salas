@@ -1,0 +1,20 @@
+meta {
+  name: 07 Sala inexistente (404)
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/api/salas/no-existe-123
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{idToken}}
+}
+
+assert {
+  res.status: eq 404
+}
+

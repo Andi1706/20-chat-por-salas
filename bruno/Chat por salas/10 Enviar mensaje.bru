@@ -1,0 +1,28 @@
+meta {
+  name: 10 Enviar mensaje (201)
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{baseUrl}}/api/salas/{{salaId}}/mensajes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{idToken}}
+}
+
+body:json {
+  { "texto": "Hola desde Bruno" }
+}
+
+assert {
+  res.status: eq 201
+}
+
+script:post-response {
+  bru.setVar("mensajeId", res.body.id);
+}
+

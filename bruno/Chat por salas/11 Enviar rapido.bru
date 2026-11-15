@@ -1,0 +1,24 @@
+meta {
+  name: 11 Segundo mensaje inmediato (429)
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{baseUrl}}/api/salas/{{salaId}}/mensajes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{idToken}}
+}
+
+body:json {
+  { "texto": "demasiado rápido" }
+}
+
+assert {
+  res.status: eq 429
+}
+

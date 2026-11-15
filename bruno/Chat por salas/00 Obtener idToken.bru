@@ -1,0 +1,32 @@
+meta {
+  name: 00 Obtener idToken
+  type: http
+  seq: 1
+}
+
+post {
+  url: https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={{apiKey}}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "{{correo}}",
+    "password": "{{clave}}",
+    "returnSecureToken": true
+  }
+}
+
+assert {
+  res.status: eq 200
+}
+
+script:post-response {
+  bru.setVar("idToken", res.body.idToken);
+}
+
+docs {
+  Inicia sesión en Firebase con el correo y la contraseña del entorno y guarda el idToken en la variable `idToken`.
+  Ejecute esta petición primero. La contraseña (`clave`) es un valor secreto del entorno: no se sube a Git.
+}

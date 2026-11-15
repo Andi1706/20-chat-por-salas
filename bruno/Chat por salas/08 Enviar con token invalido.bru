@@ -1,0 +1,28 @@
+meta {
+  name: 08 Enviar mensaje con token inválido (401)
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/api/salas/{{salaId}}/mensajes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: token-invalido
+}
+
+body:json {
+  { "texto": "hola" }
+}
+
+assert {
+  res.status: eq 401
+}
+
+docs {
+  Sin sesión y sin cabecera Authorization, un POST ni siquiera llega a la autenticación:
+  la defensa CSRF responde 403 ("Falta la cabecera Origin"). Con un token inválido responde 401.
+}

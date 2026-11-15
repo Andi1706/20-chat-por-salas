@@ -1,0 +1,20 @@
+meta {
+  name: 05 Listar salas (200)
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/salas?mias=true&limite=20
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{idToken}}
+}
+
+assert {
+  res.status: eq 200
+}
+

@@ -1,0 +1,20 @@
+meta {
+  name: 14 Sondeo con fecha inválida (400)
+  type: http
+  seq: 15
+}
+
+get {
+  url: {{baseUrl}}/api/salas/{{salaId}}/mensajes?since=ayer
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{idToken}}
+}
+
+assert {
+  res.status: eq 400
+}
+

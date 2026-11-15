@@ -1,0 +1,20 @@
+meta {
+  name: 15 Eliminar mensaje (204)
+  type: http
+  seq: 16
+}
+
+delete {
+  url: {{baseUrl}}/api/salas/{{salaId}}/mensajes/{{mensajeId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{idToken}}
+}
+
+assert {
+  res.status: eq 204
+}
+

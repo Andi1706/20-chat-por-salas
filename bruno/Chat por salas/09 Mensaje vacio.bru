@@ -1,0 +1,24 @@
+meta {
+  name: 09 Enviar mensaje vacío (400)
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/api/salas/{{salaId}}/mensajes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{idToken}}
+}
+
+body:json {
+  { "texto": "   " }
+}
+
+assert {
+  res.status: eq 400
+}
+

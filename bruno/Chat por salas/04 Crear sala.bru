@@ -1,0 +1,28 @@
+meta {
+  name: 04 Crear sala (201)
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/salas
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{idToken}}
+}
+
+body:json {
+  { "nombre": "Sala de Bruno", "privada": false }
+}
+
+assert {
+  res.status: eq 201
+}
+
+script:post-response {
+  bru.setVar("salaId", res.body.id);
+}
+

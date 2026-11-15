@@ -1,0 +1,375 @@
+openapi: 3.1.0
+info:
+  title: Chat por salas
+  version: 1.0.0
+  license:
+    name: Uso académico
+    identifier: LicenseRef-academico
+  description: >
+    API REST del chat por salas en tiempo casi real (proyecto 20). Los mensajes nuevos se obtienen con sondeo corto
+    (`GET /api/salas/{id}/mensajes?since=...`). Todas las rutas, salvo crear la sesión, exigen autenticación.
+    Los errores siempre tienen la forma `{ "error": "texto", "detalles": [...] }` (los detalles solo en los 400 de validación).
+servers:
+  - url: http://localhost:3000
+    description: Desarrollo local
+  - url: https://REEMPLAZAR-CON-LA-URL-DE-VERCEL.vercel.app
+    description: Producción (Vercel)
+tags:
+  - name: Sesión
+    description: Entrar y salir. La cookie de sesión es HttpOnly.
+  - name: Salas
+    description: Crear, listar, ver y unirse a salas.
+  - name: Mensajes
+    description: Leer (sondeo corto e historial), enviar y moderar mensajes.
+security:
+  - cookieSesion: []
+  - bearerIdToken: []
+paths:
+  /api/auth/sesion:
+    post:
+      operationId: crearSesion
+      tags: [Sesión]
+      summary: Cambia un idToken reciente de Firebase por una cookie de sesión
+      description: >
+        El navegador inicia sesión con Firebase Auth, obtiene un `idToken` y lo envía aquí.
+        La respuesta trae `Set-Cookie: sesion=...; HttpOnly; SameSite=Lax` (5 días; `Secure` en producción).
+        El token debe haberse emitido hace menos de 5 minutos.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SesionNueva" }
+      responses:
+        "204":
+          description: Sesión creada. La cookie viaja en `Set-Cookie`.
+          headers:
+            Set-Cookie:
+              schema: { type: string }
+              example: "sesion=eyJ...; HttpOnly; SameSite=Lax; Path=/; Max-Age=432000"
+        "400": { $ref: "#/components/responses/Invalido" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "403": { $ref: "#/components/responses/Prohibido" }
+        "415": { $ref: "#/components/responses/TipoNoSoportado" }
+    delete:
+      operationId: cerrarSesion
+      tags: [Sesión]
+      summary: Cierra la sesión (borra la cookie y revoca los tokens)
+      description: >
+        No exige estar autenticado: es idempotente. Si la cookie ya venció igual responde 204 y la borra.
+      security: []
+      responses:
+        "204":
+          description: Sesión cerrada. La cookie se borra con `Max-Age=0`.
+        "403": { $ref: "#/components/responses/Prohibido" }
+  /api/auth/yo:
+    get:
+      operationId: obtenerUsuario
+      tags: [Sesión]
+      summary: Quién es el usuario de la sesión
+      responses:
+        "200":
+          description: Usuario autenticado.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [usuario]
+                properties:
+                  usuario: { $ref: "#/components/schemas/Usuario" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+  /api/salas:
+    get:
+      operationId: listarSalas
+      tags: [Salas]
+      summary: Lista salas con paginación por cursor
+      description: Sin `mias` lista las públicas; con `mias=true`, las salas de las que eres miembro.
+      parameters:
+        - name: mias
+          in: query
+          schema: { type: string, enum: ["true", "false"], default: "false" }
+        - $ref: "#/components/parameters/Limite"
+        - $ref: "#/components/parameters/Cursor"
+      responses:
+        "200":
+          description: Página de salas.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaginaSalas" }
+        "400": { $ref: "#/components/responses/Invalido" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+    post:
+      operationId: crearSala
+      tags: [Salas]
+      summary: Crea una sala (el creador queda como primer miembro)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SalaNueva" }
+      responses:
+        "201":
+          description: Sala creada.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Sala" }
+        "400": { $ref: "#/components/responses/Invalido" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "403": { $ref: "#/components/responses/Prohibido" }
+        "415": { $ref: "#/components/responses/TipoNoSoportado" }
+  /api/salas/{id}:
+    parameters:
+      - $ref: "#/components/parameters/SalaId"
+    get:
+      operationId: obtenerSala
+      tags: [Salas]
+      summary: Detalle de una sala
+      responses:
+        "200":
+          description: La sala.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Sala" }
+        "400": { $ref: "#/components/responses/Invalido" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "403": { $ref: "#/components/responses/NoMiembro" }
+        "404": { $ref: "#/components/responses/NoEncontrado" }
+  /api/salas/{id}/unirse:
+    parameters:
+      - $ref: "#/components/parameters/SalaId"
+    post:
+      operationId: unirseASala
+      tags: [Salas]
+      summary: Te une a una sala pública (si ya eres miembro no cambia nada)
+      responses:
+        "200":
+          description: La sala con tu uid entre los miembros.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Sala" }
+        "400": { $ref: "#/components/responses/Invalido" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "403": { $ref: "#/components/responses/NoMiembro" }
+        "404": { $ref: "#/components/responses/NoEncontrado" }
+  /api/salas/{id}/mensajes:
+    parameters:
+      - $ref: "#/components/parameters/SalaId"
+    get:
+      operationId: listarMensajes
+      tags: [Mensajes]
+      summary: Mensajes de la sala (sondeo corto o historial)
+      description: >
+        Con `since` (fecha ISO 8601) devuelve solo los mensajes posteriores, del más viejo al más nuevo (máximo 100):
+        es el sondeo que hace la interfaz cada 2 segundos. Sin `since` devuelve el historial, la página más reciente
+        primero; `siguienteCursor` apunta a los mensajes más viejos.
+      parameters:
+        - name: since
+          in: query
+          schema: { type: string, format: date-time }
+          example: "2026-11-14T12:00:00.000Z"
+        - $ref: "#/components/parameters/Limite"
+        - $ref: "#/components/parameters/Cursor"
+      responses:
+        "200":
+          description: Página de mensajes en orden cronológico.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaginaMensajes" }
+        "400": { $ref: "#/components/responses/Invalido" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "403": { $ref: "#/components/responses/NoMiembro" }
+        "404": { $ref: "#/components/responses/NoEncontrado" }
+    post:
+      operationId: enviarMensaje
+      tags: [Mensajes]
+      summary: Envía un mensaje (debes ser miembro; máximo 1 por segundo)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/MensajeNuevo" }
+      responses:
+        "201":
+          description: Mensaje creado. El autor sale de la sesión, nunca del cuerpo.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Mensaje" }
+        "400": { $ref: "#/components/responses/Invalido" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "403": { $ref: "#/components/responses/NoMiembro" }
+        "404": { $ref: "#/components/responses/NoEncontrado" }
+        "415": { $ref: "#/components/responses/TipoNoSoportado" }
+        "429":
+          description: Más de un mensaje por segundo.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+              example: { error: "Demasiados mensajes: espera un segundo" }
+  /api/salas/{id}/mensajes/{mid}:
+    parameters:
+      - $ref: "#/components/parameters/SalaId"
+      - name: mid
+        in: path
+        required: true
+        schema: { $ref: "#/components/schemas/Id" }
+    delete:
+      operationId: eliminarMensaje
+      tags: [Mensajes]
+      summary: "Elimina un mensaje (moderación: solo el creador de la sala)"
+      responses:
+        "204":
+          description: Mensaje eliminado.
+        "400": { $ref: "#/components/responses/Invalido" }
+        "401": { $ref: "#/components/responses/NoAutenticado" }
+        "403": { $ref: "#/components/responses/Prohibido" }
+        "404": { $ref: "#/components/responses/NoEncontrado" }
+components:
+  securitySchemes:
+    cookieSesion:
+      type: apiKey
+      in: cookie
+      name: sesion
+      description: Cookie HttpOnly creada por `POST /api/auth/sesion`. Es lo que usa la interfaz.
+    bearerIdToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: idToken de Firebase. Solo para pruebas con Bruno o Postman.
+  parameters:
+    SalaId:
+      name: id
+      in: path
+      required: true
+      schema: { $ref: "#/components/schemas/Id" }
+    Limite:
+      name: limite
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+    Cursor:
+      name: cursor
+      in: query
+      description: Valor de `siguienteCursor` de la página anterior.
+      schema: { type: string, minLength: 1, maxLength: 200 }
+  responses:
+    Invalido:
+      description: Datos inválidos (cuerpo, parámetros o identificador).
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example:
+            error: Datos inválidos
+            detalles:
+              - campo: texto
+                mensaje: El mensaje no puede estar vacío
+    NoAutenticado:
+      description: Falta la sesión o venció.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example: { error: No autenticado }
+    NoMiembro:
+      description: La sala es privada y no eres miembro, o no eres miembro para escribir.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example: { error: No eres miembro de esta sala }
+    Prohibido:
+      description: Acción no permitida (origen no permitido, o falta de permisos de moderación).
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example: { error: Origen no permitido }
+    NoEncontrado:
+      description: La sala o el mensaje no existe.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example: { error: La sala no existe }
+    TipoNoSoportado:
+      description: El Content-Type debe ser application/json.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example: { error: El Content-Type debe ser application/json }
+  schemas:
+    Id:
+      type: string
+      pattern: "^[A-Za-z0-9_-]{1,64}$"
+      example: 8fKq2LmZ
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string }
+        detalles:
+          type: array
+          items:
+            type: object
+            required: [campo, mensaje]
+            properties:
+              campo: { type: string }
+              mensaje: { type: string }
+    SesionNueva:
+      type: object
+      additionalProperties: false
+      required: [idToken]
+      properties:
+        idToken: { type: string, minLength: 10 }
+    Usuario:
+      type: object
+      required: [uid, correo, nombre, rol]
+      properties:
+        uid: { type: string }
+        correo: { type: string }
+        nombre: { type: string }
+        rol: { type: string, example: usuario }
+    SalaNueva:
+      type: object
+      additionalProperties: false
+      required: [nombre]
+      properties:
+        nombre: { type: string, minLength: 3, maxLength: 50, example: General }
+        privada: { type: boolean, default: false }
+    Sala:
+      type: object
+      required: [id, nombre, creadorUid, privada, miembros, creadaEn]
+      properties:
+        id: { $ref: "#/components/schemas/Id" }
+        nombre: { type: string }
+        creadorUid: { type: string }
+        privada: { type: boolean }
+        miembros:
+          type: array
+          items: { type: string }
+        creadaEn: { type: string, format: date-time }
+    MensajeNuevo:
+      type: object
+      additionalProperties: false
+      required: [texto]
+      properties:
+        texto: { type: string, minLength: 1, maxLength: 500, example: Hola equipo }
+    Mensaje:
+      type: object
+      required: [id, uid, nombre, texto, creadoEn]
+      properties:
+        id: { $ref: "#/components/schemas/Id" }
+        uid: { type: string }
+        nombre: { type: string }
+        texto: { type: string }
+        creadoEn: { type: string, format: date-time }
+    PaginaSalas:
+      type: object
+      required: [items, siguienteCursor]
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/Sala" }
+        siguienteCursor: { type: [string, "null"] }
+    PaginaMensajes:
+      type: object
+      required: [items, siguienteCursor]
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/Mensaje" }
+        siguienteCursor: { type: [string, "null"] }
