@@ -1,0 +1,56 @@
+.encabezado {
+  background: var(--superficie);
+  border-bottom: 1px solid var(--borde);
+}
+
+.contenido {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.25rem;
+  max-width: var(--ancho);
+  margin: 0 auto;
+  padding: 0.6rem var(--margen);
+}
+
+.marca {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--texto);
+  text-decoration: none;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  flex: 1;
+}
+
+.nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+
+.sesion {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
+.nombre {
+  max-width: 10rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--texto-suave);
+}
+
+@media (max-width: 480px) {
+  .nav {
+    order: 3;
+    flex-basis: 100%;
+  }
+}

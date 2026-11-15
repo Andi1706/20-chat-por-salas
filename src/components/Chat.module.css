@@ -1,0 +1,73 @@
+.sala {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.relleno {
+  padding: 1.5rem;
+}
+
+.cabecera {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--cabecera);
+  border-bottom: 1px solid var(--borde);
+}
+
+.atras {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  color: var(--texto);
+  border-radius: 50%;
+}
+
+.atras:hover {
+  background: var(--hover);
+}
+
+.titulos {
+  flex: 1;
+  min-width: 0;
+}
+
+.titulos h1 {
+  margin: 0;
+  overflow: hidden;
+  font-size: 1.05rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.titulos p {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+}
+
+.unirse {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--cabecera);
+  border-top: 1px solid var(--borde);
+}
+
+.unirse p {
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .atras {
+    display: none;
+  }
+}

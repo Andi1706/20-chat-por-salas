@@ -1,0 +1,20 @@
+.datos {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.5rem 1.25rem;
+  max-width: 30rem;
+  padding: 1rem 1.25rem;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+}
+
+.datos dt {
+  color: var(--texto-suave);
+}
+
+.datos dd {
+  margin: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}

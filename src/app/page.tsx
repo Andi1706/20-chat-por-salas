@@ -1,8 +1,6 @@
-export default function Inicio() {
-  return (
-    <main>
-      <h1>Chat por salas</h1>
-      <p>Próximamente.</p>
-    </main>
-  );
+import { redirect } from "next/navigation";
+
+/** La portada no tiene contenido propio: lleva a las salas (el proxy pide login si hace falta). */
+export default function Portada() {
+  redirect("/salas");
 }

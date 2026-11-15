@@ -1,0 +1,38 @@
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 26rem;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-grande);
+}
+
+.formulario h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.fallo {
+  margin: 0;
+  padding: 0.6rem 0.8rem;
+  color: var(--error-texto);
+  background: var(--error-fondo);
+  border: 1px solid var(--error-borde);
+  border-radius: var(--radio);
+}
+
+.casilla {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 2.75rem;
+}
+
+.casilla input {
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: var(--acento);
+}

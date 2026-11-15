@@ -1,0 +1,15 @@
+.panel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.aviso {
+  margin: 0;
+  padding: 0.4rem 1rem;
+  color: var(--aviso-texto);
+  background: var(--aviso-fondo);
+  font-size: 0.9rem;
+  text-align: center;
+}

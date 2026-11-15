@@ -1,0 +1,150 @@
+.zona {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Fondo con puntos muy suaves: da textura sin competir con los mensajes. */
+.registro {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  height: 100%;
+  padding: 0.75rem clamp(0.75rem, 6%, 4rem);
+  overflow-y: auto;
+  background-color: var(--fondo-chat);
+  background-image: radial-gradient(var(--patron) 1.2px, transparent 1.2px);
+  background-size: 22px 22px;
+}
+
+.dia {
+  align-self: center;
+  margin: 0.75rem 0 0.5rem;
+}
+
+.dia span {
+  padding: 0.2rem 0.8rem;
+  color: var(--texto-suave);
+  background: var(--superficie);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  box-shadow: 0 1px 1px rgb(0 0 0 / 0.08);
+}
+
+.vacio {
+  align-self: center;
+  margin: auto;
+  padding: 0.4rem 1rem;
+  color: var(--texto-suave);
+  background: var(--superficie);
+  border-radius: var(--radio);
+}
+
+.anteriores {
+  align-self: center;
+  min-height: 2.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0 1rem;
+  color: var(--acento-fuerte);
+  background: var(--superficie);
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.mensaje {
+  align-self: flex-start;
+  min-width: 4.5rem;
+  max-width: min(34rem, 85%);
+  padding: 0.3rem 0.65rem 0.2rem;
+  background: var(--burbuja);
+  border-radius: 0.6rem;
+  box-shadow: 0 1px 1px rgb(0 0 0 / 0.1);
+}
+
+.propio {
+  align-self: flex-end;
+  color: var(--propio-texto);
+  background: var(--propio-fondo);
+}
+
+/* La primera burbuja de cada racha tiene la esquina del lado de quien escribe más cuadrada. */
+.primero {
+  margin-top: 0.4rem;
+  border-top-left-radius: 0.15rem;
+}
+
+.propio.primero {
+  border-top-left-radius: 0.6rem;
+  border-top-right-radius: 0.15rem;
+}
+
+.autor {
+  display: block;
+  color: hsl(var(--tono) 55% 32%);
+  font-size: 0.85rem;
+}
+
+.texto {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.pie {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  color: var(--texto-suave);
+  font-size: 0.75rem;
+}
+
+.propio .pie {
+  color: var(--propio-suave);
+}
+
+.eliminar {
+  min-height: 1.75rem;
+  padding: 0 0.4rem;
+  color: var(--error-texto);
+  background: none;
+  border: 0;
+  border-radius: var(--radio);
+  cursor: pointer;
+  font-size: 0.75rem;
+  text-decoration: underline;
+}
+
+.alFinal {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  color: var(--texto);
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.2);
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .autor {
+    color: hsl(var(--tono) 70% 72%);
+  }
+}
+
+/* Con mouse, "Eliminar" aparece al pasar sobre el mensaje o al enfocarlo con el teclado; en pantallas táctiles siempre se ve. */
+@media (hover: hover) {
+  .eliminar {
+    opacity: 0;
+  }
+
+  .mensaje:hover .eliminar,
+  .mensaje:focus-within .eliminar {
+    opacity: 1;
+  }
+}

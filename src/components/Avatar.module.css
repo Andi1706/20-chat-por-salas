@@ -1,0 +1,20 @@
+.avatar {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  color: #fff;
+  background: hsl(var(--tono) 42% 32%);
+  border-radius: 50%;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  user-select: none;
+}
+
+.grande {
+  width: 3.25rem;
+  height: 3.25rem;
+  font-size: 1.1rem;
+}

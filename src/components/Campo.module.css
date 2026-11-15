@@ -1,0 +1,30 @@
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.campo label {
+  font-weight: 600;
+}
+
+.campo input[type="text"],
+.campo input[type="email"],
+.campo input[type="password"] {
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  color: var(--texto);
+  background: var(--fondo);
+  border: 1px solid var(--borde-fuerte);
+  border-radius: var(--radio);
+}
+
+.campo input[aria-invalid="true"] {
+  border-color: var(--error-borde);
+}
+
+.error {
+  margin: 0;
+  color: var(--error-texto);
+  font-size: 0.9rem;
+}

@@ -1,0 +1,153 @@
+.barra {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: var(--superficie);
+  border-right: 1px solid var(--borde);
+}
+
+.cabecera {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--cabecera);
+}
+
+.yo {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  min-height: 2.75rem;
+  color: var(--texto);
+  text-decoration: none;
+}
+
+.nombre {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.icono {
+  display: inline-grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  color: var(--texto-suave);
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.icono:hover {
+  color: var(--texto);
+  background: var(--hover);
+}
+
+.herramientas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+.buscador {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.75rem;
+  color: var(--texto-suave);
+  background: var(--hover);
+  border-radius: var(--radio);
+}
+
+.buscador input {
+  flex: 1;
+  min-width: 0;
+  min-height: 2.5rem;
+  color: var(--texto);
+  background: none;
+  border: 0;
+  outline-offset: 6px;
+}
+
+.filtro {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.filtro button {
+  min-height: 2.25rem;
+  padding: 0 0.9rem;
+  color: var(--texto);
+  background: none;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.filtro button[aria-pressed="true"] {
+  color: var(--acento-fuerte);
+  background: var(--acento-suave);
+  border-color: transparent;
+  font-weight: 600;
+}
+
+.lista {
+  flex: 1;
+  min-height: 0;
+  padding-bottom: 1rem;
+  overflow-y: auto;
+}
+
+.salas {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fila {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-height: 4.25rem;
+  padding: 0.5rem 0.75rem;
+  color: var(--texto);
+  text-decoration: none;
+}
+
+.fila:hover {
+  background: var(--hover);
+}
+
+.fila[aria-current="page"] {
+  background: var(--seleccion);
+}
+
+.texto {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.titulo {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detalle {
+  overflow: hidden;
+  color: var(--texto-suave);
+  font-size: 0.875rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
