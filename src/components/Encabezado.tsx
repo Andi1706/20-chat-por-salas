@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { salir } from "@/cliente/autenticacion";
+import { irA } from "@/cliente/navegacion";
 import { useUsuario } from "./ProveedorUsuario";
 import styles from "./Encabezado.module.css";
 
@@ -19,7 +20,6 @@ function Navegacion({ conSesion }: { conSesion: boolean }) {
 }
 
 function AccionSesion({ conSesion }: { conSesion: boolean }) {
-  const router = useRouter();
   const { recargar } = useUsuario();
   const [saliendo, setSaliendo] = useState(false);
 
@@ -29,7 +29,7 @@ function AccionSesion({ conSesion }: { conSesion: boolean }) {
       await salir();
     } finally {
       recargar();
-      router.push("/login");
+      irA("/login");
       setSaliendo(false);
     }
   }

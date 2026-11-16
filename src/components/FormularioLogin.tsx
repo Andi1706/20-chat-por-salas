@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import {
   credencialesSchema,
@@ -9,12 +9,12 @@ import {
   mensajeDeFirebase,
 } from "@/cliente/autenticacion";
 import { erroresPorCampo } from "@/cliente/formularios";
+import { irA } from "@/cliente/navegacion";
 import { Campo } from "./Campo";
 import { useUsuario } from "./ProveedorUsuario";
 import styles from "./Formulario.module.css";
 
 function useLogin() {
-  const router = useRouter();
   const destino = destinoSeguro(useSearchParams().get("siguiente"));
   const { recargar } = useUsuario();
   const [esRegistro, setEsRegistro] = useState(false);
@@ -36,7 +36,7 @@ function useLogin() {
     try {
       await entrar(resultado.data, esRegistro);
       recargar();
-      router.push(destino);
+      irA(destino);
     } catch (error) {
       setFallo(mensajeDeFirebase(error));
       setEnviando(false);

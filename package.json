@@ -21,7 +21,6 @@
     "react-dom": "19.3.0",
     "zod": "^4.6.7"
   },
-
   "devDependencies": {
     "@tailwindcss/turbopack": "4.3.3",
     "@testing-library/jest-dom": "^7.0.1",
@@ -42,14 +41,11 @@
     "vitest": "^5.1.0",
     "yaml": "^2.9.1"
   },
-
-
-"overrides": {
-  "jwks-rsa": {
-    "jose": "4.15.9"
-  }
-},
-
+  "overrides": {
+    "jwks-rsa": {
+      "jose": "4.15.9"
+    }
+  },
   "engines": {
     "node": "22.x"
   }

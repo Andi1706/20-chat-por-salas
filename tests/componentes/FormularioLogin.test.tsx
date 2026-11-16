@@ -3,12 +3,12 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const mocks = vi.hoisted(() => ({ entrar: vi.fn(), push: vi.fn() }));
+const mocks = vi.hoisted(() => ({ entrar: vi.fn(), irA: vi.fn() }));
 
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: mocks.push }),
   useSearchParams: () => new URLSearchParams("siguiente=/salas/abc"),
 }));
+vi.mock("@/cliente/navegacion", () => ({ irA: mocks.irA }));
 vi.mock("@/cliente/autenticacion", async (original) => ({
   ...(await original<typeof import("@/cliente/autenticacion")>()),
   entrar: mocks.entrar,
@@ -42,7 +42,7 @@ describe("FormularioLogin", () => {
       { correo: "ana@ejemplo.com", clave: "secreto1" },
       false,
     );
-    expect(mocks.push).toHaveBeenCalledWith("/salas/abc");
+    expect(mocks.irA).toHaveBeenCalledWith("/salas/abc");
   });
 
   it("muestra el error de Firebase con palabras claras", async () => {
@@ -53,6 +53,6 @@ describe("FormularioLogin", () => {
     await userEvent.click(screen.getByRole("button", { name: "Entrar" }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent("Correo o contraseña incorrectos");
-    expect(mocks.push).not.toHaveBeenCalled();
+    expect(mocks.irA).not.toHaveBeenCalled();
   });
 });

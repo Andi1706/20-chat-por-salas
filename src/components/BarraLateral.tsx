@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { salir } from "@/cliente/autenticacion";
+import { irA } from "@/cliente/navegacion";
 import { useSalas } from "@/hooks/useSalas";
 import type { Sala } from "@/schemas/sala";
 import { Avatar } from "./Avatar";
@@ -13,7 +14,6 @@ import { useUsuario } from "./ProveedorUsuario";
 import styles from "./BarraLateral.module.css";
 
 function Cabecera() {
-  const router = useRouter();
   const { usuario, recargar } = useUsuario();
 
   async function cerrarSesion() {
@@ -21,7 +21,7 @@ function Cabecera() {
       await salir();
     } finally {
       recargar();
-      router.push("/login");
+      irA("/login");
     }
   }
 
