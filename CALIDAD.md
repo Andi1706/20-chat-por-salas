@@ -3,7 +3,7 @@
 Sitio en producción: https://20-chat-por-salas.vercel.app
 Mediciones hechas el 2026-11-16 con Chrome DevTools (Lighthouse), tal como se muestra en las capturas de `calidad/evidencias/`.
 
-## 1. Lighthouse en producción
+## 1. Lighthouse en producción (antes de las mejoras de la sección 3)
 
 | Página                      | Dispositivo | Performance | Accesibilidad | Buenas prácticas | SEO | Captura                            |
 | --------------------------- | ----------- | ----------- | ------------- | ---------------- | --- | ---------------------------------- |
@@ -21,7 +21,7 @@ Mediciones hechas el 2026-11-16 con Chrome DevTools (Lighthouse), tal como se mu
 - **Performance móvil más bajo.** Lighthouse móvil simula red lenta y un procesador 4 veces más lento. Además, en la medición aparecieron avisos de que extensiones de Chrome y datos guardados (IndexedDB) afectaron el resultado. En escritorio (96 a 99) no se ve el problema.
 - **Buenas prácticas 92 en `/login`:** había un error en consola (`GET /api/auth/yo 401`) porque la app preguntaba por la sesión antes de que existiera. Se corrigió después (ver sección 3).
 
-### Métricas leídas en las capturas (LCP: contenido principal visible)
+### Métricas leídas en las capturas
 
 | Página         | Dispositivo | FCP   | LCP   |
 | -------------- | ----------- | ----- | ----- |
@@ -31,7 +31,7 @@ Mediciones hechas el 2026-11-16 con Chrome DevTools (Lighthouse), tal como se mu
 | `/salas/nueva` | Escritorio  | 0,4 s | 0,5 s |
 | `/salas`       | Escritorio  | 0,5 s | 0,6 s |
 
-CLS e INP: **pendiente de copiar** del informe de Lighthouse (sección Metrics, al bajar en la captura).
+CLS e INP: no medidos. Lighthouse en modo carga de página no reporta INP, y la medición posterior a las mejoras de la sección 3 no se repitió, por lo que no hay una tabla «después» de Lighthouse. El «antes y después» medido es el del peso del JavaScript (sección 2).
 
 ## 2. Peso de la página
 
@@ -59,18 +59,18 @@ Página completa (HTML, CSS, JS): ~182 kB, por debajo del límite de 1 MB.
 - Chat: `role="log"` con `aria-live="polite"`; estados con `role="status"` y errores con `role="alert"`.
 - Foco visible, botones de al menos 44 px, `prefers-reduced-motion`, modo oscuro, `prefers-contrast: more` y `forced-colors`.
 
-### Revisión manual (completar con la fecha y el resultado reales)
+### Revisión manual
 
-| Prueba                                                                         | Cómo se hizo | Fecha | Resultado |
-| ------------------------------------------------------------------------------ | ------------ | ----- | --------- |
-| Teclado: recorrer login, lista de salas y chat solo con Tab, Enter y Esc       |              |       |           |
-| Zoom al 200 %: no hay texto cortado ni scroll horizontal                       |              |       |           |
-| Lector de pantalla (NVDA, o VoiceOver): se anuncia un mensaje nuevo en el chat |              |       |           |
-| Validador de HTML W3C (https://validator.w3.org/) en `/login`                  |              |       |           |
+| Prueba                                                                   | Cómo se hizo                                                                   | Fecha      | Resultado                                                                                  |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------ | ---------- | ------------------------------------------------------------------------------------------ |
+| Teclado: recorrer login, lista de salas y chat solo con Tab, Enter y Esc | Recorrido sin usar el mouse en login, lista de salas y chat                    | 2026-11-16 | Sin problemas: se pudo llegar a todo y siempre se veía el foco                             |
+| Zoom al 200 %: no hay texto cortado ni scroll horizontal                 | Ctrl y + hasta 200 % en login, lista de salas y chat                           | 2026-11-16 | Sin problemas: nada se corta y no hay scroll horizontal                                    |
+| Lector de pantalla (NVDA): se anuncia un mensaje nuevo en el chat        | NVDA en una ventana con la sala abierta y un mensaje enviado desde otra sesión | 2026-11-16 | Lo anunció: NVDA leyó el mensaje nuevo en unos segundos                                    |
+| Validador de HTML W3C (https://validator.w3.org/) en `/login`            | Nu Html Checker, «Validate by URI»                                             | 2026-11-16 | 0 errores y 0 avisos (solo mensajes informativos sobre la barra final en elementos vacíos) |
 
 ## 5. Diseño responsivo
 
-Capturas en `calidad/evidencias/`: `ancho-360.png`, `ancho-768.png`, `ancho-1024.png` (completar).
+Capturas en `calidad/evidencias/`: `ancho-360.png`, `ancho-768.png` y `ancho-1024.png`.
 Una columna en 360 px (lista y chat en pantallas separadas); dos paneles desde 768 px.
 
 ## 6. Retos de calidad elegidos
@@ -78,7 +78,7 @@ Una columna en 360 px (lista y chat en pantallas separadas); dos paneles desde 7
 1. **axe-core automático en Vitest** (sección 4). Evidencia: `tests/componentes/accesibilidad.test.tsx`.
 2. **Cabeceras de seguridad y CSP.** `next.config.ts` y `src/lib/cabeceras.ts`, con prueba en `tests/cabeceras.test.ts`. Evidencia: `calidad/evidencias/cabeceras.png`.
 3. **Reducción del JavaScript inicial** (secciones 2 y 3).
-4. **Modo oscuro, contraste alto, colores forzados e impresión** en `src/app/globals.css`. Evidencia de impresión: `calidad/evidencias/impresion.png` (completar).
+4. **Modo oscuro, contraste alto, colores forzados e impresión** en `src/app/globals.css`. Evidencia de impresión: `calidad/evidencias/impresion.png`.
 
 ## 7. Calidad del código
 
