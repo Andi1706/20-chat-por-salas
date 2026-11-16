@@ -1,4 +1,3 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { z } from "zod";
 import { pedirApi } from "./api";
 import { authCliente } from "./firebase";
@@ -25,7 +24,9 @@ export function mensajeDeFirebase(error: unknown): string {
  * 2) Nuestro servidor cambia ese idToken por una cookie HttpOnly. El token no se guarda en el navegador.
  */
 export async function entrar(credenciales: Credenciales, esRegistro: boolean): Promise<void> {
-  const auth = authCliente();
+  const { createUserWithEmailAndPassword, signInWithEmailAndPassword } =
+    await import("firebase/auth");
+  const auth = await authCliente();
   const { correo, clave } = credenciales;
   const resultado = esRegistro
     ? await createUserWithEmailAndPassword(auth, correo, clave)
@@ -36,7 +37,8 @@ export async function entrar(credenciales: Credenciales, esRegistro: boolean): P
 
 export async function salir(): Promise<void> {
   await pedirApi("/api/auth/sesion", { metodo: "DELETE" });
-  await signOut(authCliente());
+  const { signOut } = await import("firebase/auth");
+  await signOut(await authCliente());
 }
 
 /** Evita redirecciones abiertas: solo se acepta una ruta interna como destino tras el login. */
