@@ -12,7 +12,7 @@ info:
 servers:
   - url: http://localhost:3000
     description: Desarrollo local
-  - url: https://REEMPLAZAR-CON-LA-URL-DE-VERCEL.vercel.app
+  - url: https://20-chat-por-salas.vercel.app
     description: Producción (Vercel)
 tags:
   - name: Sesión
