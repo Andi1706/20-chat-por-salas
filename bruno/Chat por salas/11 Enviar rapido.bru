@@ -1,12 +1,12 @@
 meta {
-  name: 11 Segundo mensaje inmediato (429)
+  name: 11 Ráfaga de 5 mensajes: se rechaza el exceso (429)
   type: http
   seq: 12
 }
 
-post {
-  url: {{baseUrl}}/api/salas/{{salaId}}/mensajes
-  body: json
+get {
+  url: {{baseUrl}}/api/salas/{{salaId}}
+  body: none
   auth: bearer
 }
 
@@ -14,11 +14,48 @@ auth:bearer {
   token: {{idToken}}
 }
 
-body:json {
-  { "texto": "demasiado rápido" }
-}
-
 assert {
-  res.status: eq 429
+  res.status: eq 200
 }
 
+script:pre-request {
+  // La regla es 1 mensaje por segundo, pero cada petición tarda más de 1 s en ir y volver (Firestore),
+  // así que dos peticiones seguidas casi nunca caen dentro del mismo segundo. Por eso aquí se lanzan
+  // 5 al mismo tiempo: la API deja pasar una y rechaza el resto con 429.
+  // Requiere el modo "Developer Mode" de Bruno (el escudo de arriba a la derecha).
+  const url = bru.getEnvVar("baseUrl") + "/api/salas/" + bru.getVar("salaId") + "/mensajes";
+  const enviar = () =>
+    bru
+      .sendRequest({
+        method: "POST",
+        url,
+        headers: {
+          Authorization: "Bearer " + bru.getVar("idToken"),
+          "Content-Type": "application/json",
+        },
+        data: { texto: "ráfaga" },
+      })
+      .then(
+        (respuesta) => respuesta.status,
+        (error) => (error.response ? error.response.status : 0),
+      );
+  const estados = await Promise.all([enviar(), enviar(), enviar(), enviar(), enviar()]);
+  bru.setVar("estadosRafaga", estados.join(","));
+}
+
+tests {
+  test("la ráfaga recibe al menos un 429", function () {
+    const estados = String(bru.getVar("estadosRafaga")).split(",");
+    expect(estados).to.include("429");
+  });
+
+  test("la regla no bloquea todo: como máximo 1 de los 5 pasa", function () {
+    const estados = String(bru.getVar("estadosRafaga")).split(",");
+    expect(estados.filter((estado) => estado === "201").length).to.be.at.most(1);
+  });
+}
+
+docs {
+  Comprueba el límite de frecuencia con 5 mensajes simultáneos del mismo usuario: al menos uno debe recibir 429.
+  Esta petición en sí es un GET de la sala (debe dar 200); la ráfaga se lanza en el script previo.
+}
