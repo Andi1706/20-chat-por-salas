@@ -39,3 +39,35 @@ export function Fallo({ mensaje, onReintentar, children }: FalloProps) {
     </div>
   );
 }
+
+/** Esqueleto de la conversación: burbujas grises mientras llegan los mensajes (evita saltos de diseño). */
+export function EsqueletoMensajes() {
+  return (
+    <div role="status" aria-busy="true" className={styles.esqueleto}>
+      <span className="solo-lector">Cargando mensajes…</span>
+      <div aria-hidden="true" className={styles.burbujas}>
+        {[60, 40, 75, 50].map((ancho, indice) => (
+          <span
+            key={ancho}
+            className={indice % 2 === 0 ? styles.burbuja : styles.burbujaPropia}
+            style={{ width: `${ancho}%` }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Esqueleto de la lista de salas. */
+export function EsqueletoSalas() {
+  return (
+    <div role="status" aria-busy="true" className={styles.esqueleto}>
+      <span className="solo-lector">Cargando salas…</span>
+      <div aria-hidden="true" className={styles.filas}>
+        {[0, 1, 2, 3, 4].map((numero) => (
+          <span key={numero} className={styles.fila} />
+        ))}
+      </div>
+    </div>
+  );
+}

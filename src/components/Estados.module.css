@@ -50,3 +50,43 @@
 .fallo p {
   margin: 0;
 }
+
+.esqueleto {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.burbujas,
+.filas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.burbuja,
+.burbujaPropia,
+.fila {
+  display: block;
+  height: 2.75rem;
+  background: var(--borde);
+  border-radius: var(--radio-grande);
+  animation: pulso 1.4s ease-in-out infinite;
+}
+
+.burbujaPropia {
+  align-self: flex-end;
+  background: var(--propio-borde);
+}
+
+.fila {
+  width: 100%;
+  height: 3.5rem;
+}
+
+@keyframes pulso {
+  50% {
+    opacity: 0.5;
+  }
+}

@@ -5,7 +5,7 @@ import { mensajeDe } from "@/cliente/api";
 import { useAvisos } from "@/hooks/useAvisos";
 import { useMensajes } from "@/hooks/useMensajes";
 import type { Sala } from "@/schemas/sala";
-import { Cargando, Fallo } from "./Estados";
+import { EsqueletoMensajes, Fallo } from "./Estados";
 import { FormularioMensaje } from "./FormularioMensaje";
 import { ListaMensajes, type MensajeVista } from "./ListaMensajes";
 import type { Usuario } from "./ProveedorUsuario";
@@ -56,7 +56,7 @@ export function PanelMensajes({ sala, usuario, puedeEscribir }: Props) {
   const { visibles, enviarTexto } = useEnvioOptimista(datos, usuario);
   useAvisos(datos.mensajes, usuario.uid, datos.estado === "listo", sala.nombre);
 
-  if (datos.estado === "cargando") return <Cargando texto="Cargando mensajes…" />;
+  if (datos.estado === "cargando") return <EsqueletoMensajes />;
   if (datos.estado === "sinSesion") {
     return <Fallo mensaje="Tu sesión venció. Vuelve a entrar para seguir en la sala." />;
   }
@@ -66,7 +66,7 @@ export function PanelMensajes({ sala, usuario, puedeEscribir }: Props) {
     <div className={styles.panel}>
       {datos.reconectando && (
         <p role="status" className={styles.aviso}>
-          Sin conexión. Reintentando…
+          Reconectando…
         </p>
       )}
       <ListaMensajes

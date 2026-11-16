@@ -7,7 +7,7 @@ import { salir } from "@/cliente/autenticacion";
 import { useSalas } from "@/hooks/useSalas";
 import type { Sala } from "@/schemas/sala";
 import { Avatar } from "./Avatar";
-import { Cargando, Fallo, Vacio } from "./Estados";
+import { EsqueletoSalas, Fallo, Vacio } from "./Estados";
 import { IconoBuscar, IconoMas, IconoSalir } from "./Iconos";
 import { useUsuario } from "./ProveedorUsuario";
 import styles from "./BarraLateral.module.css";
@@ -125,7 +125,7 @@ function Contenido(props: {
 
   return (
     <>
-      {salas.estado === "cargando" && <Cargando texto="Cargando salas…" />}
+      {salas.estado === "cargando" && <EsqueletoSalas />}
       {salas.estado === "error" && (
         <Fallo
           mensaje={salas.error ?? "No se pudieron cargar las salas"}
@@ -172,6 +172,7 @@ export function BarraLateral() {
           rutaActual={rutaActual}
         />
       </div>
+      <footer className={styles.pie}>Chat por salas · Next.js y Firebase</footer>
     </aside>
   );
 }

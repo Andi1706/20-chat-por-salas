@@ -1,0 +1,11 @@
+.pie {
+  padding: 1.5rem var(--margen);
+  color: var(--texto-suave);
+  border-top: 1px solid var(--borde);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.pie p {
+  margin: 0;
+}

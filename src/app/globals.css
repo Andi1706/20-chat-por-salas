@@ -209,3 +209,47 @@ button {
     display: none;
   }
 }
+
+/* Contraste alto: bordes y textos más marcados para quien lo pide en su sistema. */
+@media (prefers-contrast: more) {
+  :root {
+    --texto-suave: var(--texto);
+    --borde: var(--borde-fuerte);
+  }
+
+  .boton,
+  .boton-secundario {
+    border-width: 2px;
+  }
+}
+
+/* Modo de colores forzados de Windows: se respetan los colores del sistema. */
+@media (forced-colors: active) {
+  .boton,
+  .boton-secundario {
+    border: 2px solid ButtonText;
+  }
+}
+
+/* Impresión: solo el contenido, sin barras ni formularios. */
+@media print {
+  .saltar,
+  aside,
+  form,
+  header,
+  footer,
+  button {
+    display: none !important;
+  }
+
+  body {
+    color: #000;
+    background: #fff;
+  }
+
+  .marco,
+  .principal {
+    height: auto;
+    min-height: 0;
+  }
+}

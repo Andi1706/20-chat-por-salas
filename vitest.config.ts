@@ -9,6 +9,8 @@ export default defineConfig({
   },
   test: {
     environment: "node",
+    // Limpia los componentes entre pruebas y activa los matchers de jest-dom (toBeInTheDocument...).
+    setupFiles: ["tests/setup.ts"],
     include: ["tests/**/*.test.{ts,tsx}"],
     coverage: {
       provider: "v8",

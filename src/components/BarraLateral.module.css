@@ -151,3 +151,11 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.pie {
+  padding: 0.6rem 1rem;
+  color: var(--texto-suave);
+  border-top: 1px solid var(--borde);
+  font-size: 0.8rem;
+  text-align: center;
+}
