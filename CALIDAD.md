@@ -97,3 +97,7 @@ Ejecutado el 2026-11-16 con `npm audit --omit=dev`: 4 avisos de severidad alta, 
 - **No se usó `npm audit fix --force`:** instalaría `firebase@9.14.0`, un retroceso de varias versiones mayores que rompería la autenticación.
 - **Pendiente de vigilar:** el paquete `@firebase/firestore` fija `@grpc/grpc-js@~1.9.0`; el aviso desaparecerá cuando Firebase publique una versión que lo actualice. Se revisará con cada actualización de `firebase`.
 - Sin secretos en los registros: las respuestas de error no incluyen valores de variables de entorno.
+
+## 9. Cambio posterior a las mediciones
+
+- **SEO de las páginas con sesión (63):** `robots.txt` bloqueaba `/salas` y `/perfil`, y Lighthouse las marcaba como «no indexables». Ahora solo se bloquea `/api/`: sin sesión, el proxy redirige a `/login`, así que un buscador nunca ve el contenido privado. Este cambio **no se volvió a medir** con Lighthouse.
