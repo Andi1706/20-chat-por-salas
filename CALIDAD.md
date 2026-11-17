@@ -84,3 +84,16 @@ Una columna en 360 px (lista y chat en pantallas separadas); dos paneles desde 7
 
 `npm run check` ejecuta, en este orden: TypeScript estricto, ESLint (complejidad ≤ 10, funciones ≤ 50 líneas, archivos ≤ 300), Prettier y Vitest con umbrales de cobertura. Última ejecución: 77 pruebas en verde; cobertura de servicios 94 %.
 Colección de Bruno (16 solicitudes) en verde contra producción: `calidad/evidencias/bruno-produccion-16-verdes.png`.
+
+## 8. Revisión de `npm audit`
+
+Ejecutado el 2026-11-16 con `npm audit --omit=dev`: 4 avisos de severidad alta, todos con el mismo origen: `@grpc/grpc-js` 1.9.16, que llega por `firebase` → `@firebase/firestore`.
+
+| Aviso                                                                                              | Por qué no afecta a este proyecto                                                                                            | Decisión               |
+| -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| `getAuthContext` puede devolver certificados no autorizados como autorizados (GHSA-m9gg-hp2v-232j) | El navegador solo importa `firebase/auth`, nunca `firebase/firestore`, así que esa librería no se usa ni se envía al cliente | Aceptado y documentado |
+| El servidor transmite mensajes de error de los manejadores al cliente (GHSA-f596-whhp-79r4)        | El servidor usa `firebase-admin`, que trae `@grpc/grpc-js` 1.14.7 (ya corregido)                                             | Aceptado y documentado |
+
+- **No se usó `npm audit fix --force`:** instalaría `firebase@9.14.0`, un retroceso de varias versiones mayores que rompería la autenticación.
+- **Pendiente de vigilar:** el paquete `@firebase/firestore` fija `@grpc/grpc-js@~1.9.0`; el aviso desaparecerá cuando Firebase publique una versión que lo actualice. Se revisará con cada actualización de `firebase`.
+- Sin secretos en los registros: las respuestas de error no incluyen valores de variables de entorno.
