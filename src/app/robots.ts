@@ -1,10 +1,14 @@
 import type { MetadataRoute } from "next";
 import { urlDelSitio } from "@/lib/sitio";
 
-/** Solo la página de entrada es pública: las salas y la API no deben indexarse. */
+/**
+ * Solo se bloquea la API. Las salas y el perfil no necesitan bloqueo: sin sesión, el proxy
+ * redirige a /login, así que un buscador nunca ve su contenido. (Si se bloquearan aquí,
+ * Lighthouse marcaría esas páginas como «no indexables» y bajaría su puntaje de SEO.)
+ */
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: { userAgent: "*", allow: "/login", disallow: ["/api/", "/salas", "/perfil"] },
+    rules: { userAgent: "*", allow: "/", disallow: "/api/" },
     sitemap: `${urlDelSitio()}/sitemap.xml`,
   };
 }
